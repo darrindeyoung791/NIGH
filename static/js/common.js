@@ -2,6 +2,7 @@ const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobile-menu');
 const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
 const themeToggle = document.getElementById('theme-toggle');
+const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
 
 // 主题切换功能
 function toggleTheme() {
@@ -28,6 +29,9 @@ initTheme();
 
 // 监听主题切换按钮
 themeToggle.addEventListener('click', toggleTheme);
+if (mobileThemeToggle) {
+    mobileThemeToggle.addEventListener('click', toggleTheme);
+}
 
 hamburger.addEventListener('click', () => {
     hamburger.classList.toggle('active');

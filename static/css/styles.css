@@ -199,7 +199,6 @@ p {
   background-color: var(--vp-c-bg-elv);
   backdrop-filter: blur(10px);
   z-index: 1000;
-  box-shadow: var(--vp-shadow-2);
   height: 60px;
   border-bottom: 1px solid var(--vp-c-border);
 }
@@ -228,6 +227,11 @@ p {
   height: 32px;
   width: auto;
   margin-right: 8px;
+}
+
+/* Dark mode logo inversion */
+.dark .logo {
+  filter: invert(1) hue-rotate(180deg);
 }
 
 /* 主题切换按钮 */
@@ -651,9 +655,14 @@ footer {
     width: 25px;
     height: 3px;
     margin: 5px auto;
-    background-color: var(--vp-c-text-light-1);
+    background-color: var(--vp-c-black); /* Pure black for light theme */
     transition: var(--transition);
     border-radius: 2px;
+  }
+
+  /* 深色主题下的汉堡菜单 */
+  .dark .hamburger .bar {
+    background-color: var(--vp-c-white); /* Pure white for dark theme */
   }
 
   .hamburger.active .bar:nth-child(1),
@@ -708,6 +717,17 @@ footer {
     text-align: left;
     font-size: 1.1rem;
     color: var(--vp-c-text-light-2);
+  }
+
+  .mobile-theme-toggle {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--vp-c-border);
+  }
+
+  .mobile-theme-toggle .theme-toggle {
+    margin: 0;
+    width: 36px;
+    height: 36px;
   }
 
   .mobile-menu .auth-buttons {
