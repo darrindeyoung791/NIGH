@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon/NIGH.png') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
         .register-container {
@@ -69,7 +71,10 @@
     <header>
         <nav class="navbar">
             <div class="nav-brand">
-                <h1><a href="{{ url_for('index') }}" class="nav-brand-link">全球高中新颖洞察</a></h1>
+                <a href="{{ url_for('index') }}" class="nav-brand-link">
+                    <img src="{{ url_for('static', filename='img/favicon/NIGH.png') }}" alt="NIGH Logo" class="logo">
+                    <h1>全球高中新颖洞察</h1>
+                </a>
             </div>
             <div class="nav-center">
                 <div class="nav-links">

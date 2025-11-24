@@ -204,16 +204,30 @@ p {
   border-bottom: 1px solid var(--vp-c-border);
 }
 
+.nav-brand {
+  display: flex;
+  align-items: center;
+}
+
 .nav-brand h1 {
   font-size: 1.3rem;
   font-weight: 700;
   color: var(--vp-c-text-light-1);
   margin: 0;
+  margin-left: 8px; /* Add space between logo and text */
 }
 
 .nav-brand-link {
+  display: flex;
+  align-items: center;
   text-decoration: none;
   color: inherit;
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+  margin-right: 8px;
 }
 
 /* 主题切换按钮 */

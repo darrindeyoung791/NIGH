@@ -1,10 +1,12 @@
 from flask import Flask, render_template
-from flask_sqlalchemy import SQLAlchemy
-import os
 from dotenv import load_dotenv
+import os
 
 # Load environment variables
 load_dotenv()
+
+# Import the database instance and models after loading environment
+from models import db, Article
 
 app = Flask(__name__)
 
@@ -15,7 +17,7 @@ if os.getenv('DB_HOST'):
     db_host = os.getenv('DB_HOST', 'localhost')
     db_user = os.getenv('DB_USER', 'nigh_content_user')
     db_password = os.getenv('DB_PASSWORD', 'nigh_secure_password')
-    db_name = os.getenv('DB_NAME', 'content_db')
+    db_name = os.getenv('DB_NAME', 'nigh_content_db')
     # Using PyMySQL for Flask-SQLAlchemy (as it's more commonly used with SQLAlchemy)
     app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
 else:
@@ -24,7 +26,8 @@ else:
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+# Initialize the database with the app
+db.init_app(app)
 
 @app.route('/')
 def index():

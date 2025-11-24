@@ -9,7 +9,18 @@
 
 ## 设置指南
 
-### 1. 创建数据库和用户
+### 1. 环境配置
+
+首先，确保项目根目录下有 `.env` 文件，并配置了正确的数据库凭据：
+
+```env
+DB_HOST=localhost
+DB_USER=nigh_content_user
+DB_PASSWORD=nigh_secure_password
+DB_NAME=nigh_content_db
+```
+
+### 2. 创建数据库和用户
 
 运行 SQL 脚本以创建数据库、表和专用用户：
 
@@ -18,22 +29,9 @@ mysql -u root -p < setup_database.sql
 ```
 
 这将创建：
-- 数据库: `content_db`
-- 用户: `content_user` 密码为 `secure_password`
+- 数据库: `nigh_content_db`
+- 用户: `nigh_content_user` 密码为 `nigh_secure_password`
 - 用户的适当权限
-
-### 2. 配置环境变量
-
-在项目根目录下创建 `.env` 文件，用于存储数据库凭据：
-
-```env
-DB_HOST=localhost
-DB_USER=nigh_content_user
-DB_PASSWORD=nigh_secure_password
-DB_NAME=content_db
-```
-
-> 注意：请确保将 `.env` 添加到 `.gitignore` 文件中，以防止敏感信息被提交到版本控制系统。
 
 ### 3. 安装 Python 依赖项
 
@@ -42,7 +40,7 @@ DB_NAME=content_db
 ```bash
 pip install -r ../../requirements.txt
 # 或直接安装：
-pip install mysql-connector-python pandas python-dotenv
+pip install mysql-connector-python pandas python-dotenv PyMySQL
 ```
 
 ### 4. 运行导入脚本
@@ -71,3 +69,7 @@ python import_csv_to_mysql.py [数据目录路径]
 - `title`：文章标题
 - `content`：文章内容
 - `created_at`：记录创建时间戳
+
+## Flask 应用集成
+
+Flask 应用使用 SQLAlchemy 与数据库交互。确保在 `models.py` 中定义了相应的数据模型以匹配数据库表结构。

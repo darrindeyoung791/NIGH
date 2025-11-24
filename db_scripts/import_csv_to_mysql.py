@@ -28,7 +28,7 @@ def create_connection():
             host=os.getenv('DB_HOST', 'localhost'),  # Use environment variable, default to 'localhost'
             user=os.getenv('DB_USER', 'nigh_content_user'),  # Use environment variable, default to 'nigh_content_user'
             password=os.getenv('DB_PASSWORD', 'nigh_secure_password'),  # Use environment variable, default to 'nigh_secure_password'
-            database=os.getenv('DB_NAME', 'content_db')  # Use environment variable, default to 'content_db'
+            database=os.getenv('DB_NAME', 'nigh_content_db')  # Use environment variable, default to 'nigh_content_db'
         )
         return conn
     except mysql.connector.Error as err:
@@ -98,9 +98,9 @@ def import_csv_files_to_mysql(data_path):
             if file_path.lower().endswith('.csv'):
                 # Read CSV file
                 df = pd.read_csv(file_path)
-                
-                # Assuming column order: filename, url, time, language, title, content
-                # If column names are different, adjust accordingly
+
+                # Handle different possible column name formats
+                # Check if columns are already in expected English format
                 if list(df.columns) == ['filename', 'url', 'time', 'language', 'title', 'content']:
                     df = df.rename(columns={
                         'filename': 'filename',
@@ -110,8 +110,19 @@ def import_csv_files_to_mysql(data_path):
                         'title': 'title',
                         'content': 'content'
                     })
+                # Check if columns are in Chinese format
+                elif list(df.columns) == ['文件名', '网址', '时间', '语言', '标题', '内容']:
+                    df = df.rename(columns={
+                        '文件名': 'filename',
+                        '网址': 'url',
+                        '时间': 'time_recorded',
+                        '语言': 'language',
+                        '标题': 'title',
+                        '内容': 'content'
+                    })
                 elif len(df.columns) == 6:
-                    # If columns don't have proper names, assign them
+                    # If columns don't have recognizable names but there are 6 of them, assign default names
+                    # This assumes the order is: filename, url, time, language, title, content
                     df.columns = ['filename', 'url', 'time_recorded', 'language', 'title', 'content']
                 
             elif file_path.lower().endswith('.txt'):
@@ -126,21 +137,38 @@ def import_csv_files_to_mysql(data_path):
             # Insert each row into the database
             for index, row in df.iterrows():
                 record_id = generate_uuid()
-                
-                # Prepare data for insertion
+
+                # Prepare data for insertion and handle NaN values properly
                 filename = row.get('filename', '')
+                if pd.isna(filename):
+                    filename = ''
+
                 url = row.get('url', '')
+                if pd.isna(url):
+                    url = ''
+
                 time_recorded = row.get('time_recorded', '')
+                if pd.isna(time_recorded):
+                    time_recorded = ''
+
                 language = row.get('language', '')
+                if pd.isna(language):
+                    language = ''
+
                 title = row.get('title', '')
+                if pd.isna(title):
+                    title = ''
+
                 content = row.get('content', '')
-                
+                if pd.isna(content):
+                    content = ''
+
                 # Insert into database
                 query = """
                 INSERT INTO articles (id, filename, url, time_recorded, language, title, content)
                 VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
-                
+
                 cursor.execute(query, (record_id, filename, url, time_recorded, language, title, content))
             
             conn.commit()
