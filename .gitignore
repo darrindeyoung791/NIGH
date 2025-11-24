@@ -422,3 +422,6 @@ $RECYCLE.BIN/
 # Database and resources directories
 db/
 res/
+
+# Database setup script with credentials
+db_scripts/setup_database.sql
