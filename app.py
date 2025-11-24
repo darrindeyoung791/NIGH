@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+from flask import jsonify
 from dotenv import load_dotenv
 import os
 
@@ -11,18 +12,21 @@ from models import db, Article
 app = Flask(__name__)
 
 # Database configuration
+# Using the exact MySQL configuration you specified with PyMySQL driver
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://nigh_content_user:nigh_secure_password@localhost/nigh_content_db'
+
 # Check if MySQL environment variables are set, otherwise use SQLite
-if os.getenv('DB_HOST'):
-    # Use MySQL database configuration from environment variables
-    db_host = os.getenv('DB_HOST', 'localhost')
-    db_user = os.getenv('DB_USER', 'nigh_content_user')
-    db_password = os.getenv('DB_PASSWORD', 'nigh_secure_password')
-    db_name = os.getenv('DB_NAME', 'nigh_content_db')
-    # Using PyMySQL for Flask-SQLAlchemy (as it's more commonly used with SQLAlchemy)
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
-else:
-    # Fallback to SQLite if MySQL environment variables are not set
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///app.db')
+# if os.getenv('DB_HOST'):
+#     # Use MySQL database configuration from environment variables
+#     db_host = os.getenv('DB_HOST', 'localhost')
+#     db_user = os.getenv('DB_USER', 'nigh_content_user')
+#     db_password = os.getenv('DB_PASSWORD', 'nigh_secure_password')
+#     db_name = os.getenv('DB_NAME', 'nigh_content_db')
+#     # Using PyMySQL for Flask-SQLAlchemy (as it's more commonly used with SQLAlchemy)
+#     app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://{db_user}:{db_password}@{db_host}/{db_name}"
+# else:
+#     # Fallback to SQLite if MySQL environment variables are not set
+#     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///app.db')
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -44,6 +48,20 @@ def register():
 @app.route('/dashboard')
 def dashboard():
     return render_template('main_dash.html')
+
+@app.route('/search')
+def search():
+    """Search endpoint that will allow searching articles"""
+    query = request.args.get('q', '')
+    if query:
+        # Search in the articles table
+        articles = Article.query.filter(
+            Article.title.contains(query) | Article.content.contains(query)
+        ).all()
+        results = [article.to_dict() for article in articles]
+    else:
+        results = []
+    return jsonify(results)
 
 if __name__ == '__main__':
     app.run(debug=True)
