@@ -619,7 +619,7 @@ p {
 .ai-message {
   align-self: flex-start;
   background: var(--vp-c-gray-light-5);
-  color: var(--vp-c-text-light-1);
+  color: #213547; /* Fixed dark color that works in both themes */
   padding: 10px 15px;
   border-radius: 18px 18px 18px 4px;
   max-width: 80%;
@@ -627,6 +627,15 @@ p {
   min-height: 28px;
   line-height: 1.5;
   white-space: pre-wrap;
+}
+
+/* Ensure AI typing text maintains consistent color in both themes */
+.ai-typing-text {
+  color: #213547 !important; /* Fixed dark color that works in both themes */
+}
+
+.dark .ai-typing-text {
+  color: #213547 !important; /* Fixed dark color that works in both themes */
 }
 
 /* Footer */
