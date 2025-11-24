@@ -564,6 +564,71 @@ p {
   opacity: 0.8;
 }
 
+/* AI Insights Section */
+.ai-insights-section {
+  padding: 6rem 0;
+  background-color: var(--vp-c-bg);
+}
+
+/* Global Comparison Section */
+.global-comparison-section {
+  padding: 6rem 0;
+  background-color: var(--vp-c-bg-soft);
+}
+
+/* Trend Analysis Section */
+.trend-analysis-section {
+  padding: 6rem 0;
+  background-color: var(--vp-c-bg);
+}
+
+/* Chat Interface Styles */
+.chat-container {
+  width: 450px;
+  height: 400px;
+  background: var(--vp-c-bg);
+  border-radius: var(--vp-radius);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: var(--vp-shadow-2);
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: var(--vp-c-bg);
+}
+
+.user-message {
+  align-self: flex-end;
+  background: var(--vp-c-blue);
+  color: white;
+  padding: 10px 15px;
+  border-radius: 18px 18px 4px 18px;
+  max-width: 80%;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+.ai-message {
+  align-self: flex-start;
+  background: var(--vp-c-gray-light-5);
+  color: var(--vp-c-text-light-1);
+  padding: 10px 15px;
+  border-radius: 18px 18px 18px 4px;
+  max-width: 80%;
+  font-size: 1.1rem;
+  min-height: 28px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
 /* Footer */
 footer {
   background-color: var(--vp-c-bg-elv);
