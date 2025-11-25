@@ -4,54 +4,201 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>全球高中新颖洞察</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <!-- Google Fonts: Inter and Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon/NIGH.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .dashboard-container {
+            margin-top: 60px;
+            padding: 20px;
+        }
+
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--vp-c-text-light-1);
+        }
+
+        .dashboard-header .showTime {
+            font-size: 1rem;
+            color: var(--vp-c-text-light-2);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-chart-container {
+            background: var(--vp-c-bg-elv);
+            border-radius: var(--vp-radius);
+            padding: 20px;
+            box-shadow: var(--vp-shadow-2);
+            border: 1px solid var(--vp-c-border);
+            transition: var(--transition);
+        }
+
+        .dashboard-chart-container:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--vp-shadow-4);
+        }
+
+        .chart-header {
+            margin-bottom: 15px;
+        }
+
+        .chart-header h2 {
+            font-size: 1.5rem;
+            color: var(--vp-c-text-light-1);
+            margin: 0;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 400px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <!-- 头部区域 -->
-    <header class="header">
-        <h1>全球高中新颖洞察</h1>
-        <div class="showTime" id="currentTime"></div>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}" class="nav-brand-link">
+                    <img src="{{ url_for('static', filename='img/favicon/NIGH.png') }}" alt="NIGH Logo" class="logo">
+                    <h1>全球高中新颖洞察</h1>
+                </a>
+            </div>
+            <div class="nav-center">
+                <div class="nav-links">
+                    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                    <a href="#" class="nav-link">功能</a>
+                    <a href="#" class="nav-link">数据</a>
+                    <a href="#" class="nav-link">AI解读</a>
+                </div>
+            </div>
+            <div class="auth-buttons">
+                <div class="theme-toggle" id="theme-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-when-light">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-when-dark">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x1="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </div>
+                <a href="{{ url_for('login') }}" class="btn btn-outline">登录</a>
+                <a href="{{ url_for('register') }}" class="btn btn-primary">注册</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+        <div class="mobile-menu" id="mobile-menu">
+            <button class="close-menu" id="close-menu-btn">✕</button>
+            <div class="mobile-theme-toggle">
+                <div class="theme-toggle" id="mobile-theme-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-when-light">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-when-dark">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                <a href="#" class="nav-link">功能</a>
+                <a href="#" class="nav-link">数据</a>
+                <a href="#" class="nav-link">AI解读</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="{{ url_for('login') }}" class="btn btn-outline">登录</a>
+                <a href="{{ url_for('register') }}" class="btn btn-primary">注册</a>
+            </div>
+        </div>
+        <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
     </header>
 
-    <!-- 页面主体区域 -->
-    <section class="mainbox">
-        <!-- 左侧列 -->
-        <div class="column">
+    <main class="dashboard-container">
+        <div class="dashboard-header">
+            <h1>数据可视化仪表板</h1>
+            <div class="showTime" id="currentTime"></div>
+        </div>
+
+        <div class="dashboard-grid">
             <!-- 左上角 - 各国学校数量饼图 -->
-            <div class="panel pie">
-                <h2>各国学校数量</h2>
-                <div class="chart" id="schoolCountChart"></div>
-                <div class="panel-footer"></div>
+            <div class="dashboard-chart-container">
+                <div class="chart-header">
+                    <h2>各国学校数量</h2>
+                </div>
+                <div class="chart-container" id="schoolCountChart"></div>
             </div>
-            <!-- 左下角 - 学科开设情况气泡图 -->
-            <div class="panel bubble">
-                <h2>学科开设情况统计</h2>
-                <div class="chart" id="subjectChart"></div>
-                <div class="panel-footer"></div>
-            </div>
-        </div>
 
-        <!-- 中间列 -->
-        <div class="column middle-column">
-            <!-- 这里可以放置标题、导航或其他中间内容 -->
-        </div>
-
-        <!-- 右侧列 -->
-        <div class="column">
             <!-- 右上角 - 学费统计柱状图 -->
-            <div class="panel bar">
-                <h2>学费统计情况</h2>
-                <div class="chart" id="tuitionChart"></div>
-                <div class="panel-footer"></div>
+            <div class="dashboard-chart-container">
+                <div class="chart-header">
+                    <h2>学费统计情况</h2>
+                </div>
+                <div class="chart-container" id="tuitionChart"></div>
             </div>
+
+            <!-- 左下角 - 学科开设情况气泡图 -->
+            <div class="dashboard-chart-container">
+                <div class="chart-header">
+                    <h2>学科开设情况统计</h2>
+                </div>
+                <div class="chart-container" id="subjectChart"></div>
+            </div>
+
             <!-- 右下角 - 学校存在时间折线图 -->
-            <div class="panel line">
-                <h2>学校存在时间统计</h2>
-                <div class="chart" id="ageChart"></div>
-                <div class="panel-footer"></div>
+            <div class="dashboard-chart-container">
+                <div class="chart-header">
+                    <h2>学校存在时间统计</h2>
+                </div>
+                <div class="chart-container" id="ageChart"></div>
             </div>
         </div>
-    </section>
+    </main>
 
     <!-- 引入 ECharts 库 -->
     <script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
