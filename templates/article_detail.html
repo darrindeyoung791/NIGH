@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ article.title }} - 全球高中新颖洞察</title>
+    <!-- Google Fonts: Inter and Noto Sans SC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='img/favicon/NIGH.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        .article-container {
+            margin: 2rem auto;
+            padding: 2rem;
+            max-width: 1200px;
+            width: 90%;
+        }
+
+        .article-header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--vp-c-border);
+        }
+
+        .article-title {
+            font-size: 2.5rem;
+            color: var(--vp-c-text-light-1);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+
+        .article-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            color: var(--vp-c-text-light-3);
+            font-size: 0.9rem;
+        }
+
+        .article-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--vp-c-text-light-2);
+            white-space: pre-wrap;
+        }
+
+        .article-back-button {
+            margin-bottom: 1rem;
+        }
+
+        .article-source {
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--vp-c-border);
+        }
+
+        .article-source h3 {
+            color: var(--vp-c-text-light-1);
+            margin-bottom: 0.5rem;
+        }
+
+        .article-source a {
+            color: var(--vp-c-blue);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .original-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--vp-c-bg-mute);
+            color: var(--vp-c-text-light-1);
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            transition: background-color 0.2s ease;
+            border: 1px solid var(--vp-c-border);
+        }
+
+        .original-link:hover {
+            background-color: var(--vp-c-gray-light-3);
+            text-decoration: none;
+        }
+
+        .dark .original-link:hover {
+            background-color: var(--vp-c-gray-dark-3);
+        }
+
+        @media (max-width: 768px) {
+            .article-container {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            .article-title {
+                font-size: 2rem;
+            }
+
+            .article-content {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="nav-brand">
+                <a href="{{ url_for('index') }}" class="nav-brand-link">
+                    <img src="{{ url_for('static', filename='img/favicon/NIGH.png') }}" alt="NIGH Logo" class="logo">
+                    <h1>全球高中新颖洞察</h1>
+                </a>
+            </div>
+            <div class="nav-center">
+                <div class="nav-links">
+                    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                    <a href="{{ url_for('dashboard') }}" class="nav-link">仪表板</a>
+                    <a href="#" class="nav-link">功能</a>
+                    <a href="#" class="nav-link">数据</a>
+                    <a href="#" class="nav-link">AI解读</a>
+                </div>
+            </div>
+            <div class="auth-buttons">
+                <div class="theme-toggle" id="theme-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-when-light">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-when-dark">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </div>
+                <a href="{{ url_for('login') }}" class="btn btn-outline">登录</a>
+                <a href="{{ url_for('register') }}" class="btn btn-primary">注册</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </nav>
+        <div class="mobile-menu" id="mobile-menu">
+            <button class="close-menu" id="close-menu-btn">✕</button>
+            <div class="mobile-theme-toggle">
+                <div class="theme-toggle" id="mobile-theme-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-when-light">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="theme-icon-when-dark">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link">仪表板</a>
+                <a href="#" class="nav-link">功能</a>
+                <a href="#" class="nav-link">数据</a>
+                <a href="#" class="nav-link">AI解读</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="{{ url_for('login') }}" class="btn btn-outline">登录</a>
+                <a href="{{ url_for('register') }}" class="btn btn-primary">注册</a>
+            </div>
+        </div>
+        <div class="mobile-menu-backdrop" id="mobile-menu-backdrop"></div>
+    </header>
+
+    <main class="article-container">
+        <button class="btn btn-outline article-back-button" onclick="window.history.back()">
+            <span class="material-icons">arrow_back</span> 返回
+        </button>
+        
+        <div class="article-header">
+            <h1 class="article-title">{{ article.title or '无标题' }}</h1>
+            <div class="article-meta">
+                {% if article.filename %}
+                    <span>文件名: {{ article.filename }}</span>
+                {% endif %}
+                {% if article.time_recorded %}
+                    <span>记录时间: {{ article.time_recorded }}</span>
+                {% endif %}
+                {% if article.language %}
+                    <span>语言: {{ article.language }}</span>
+                {% endif %}
+                {% if article.created_at %}
+                    <span>创建时间: {{ article.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</span>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="article-content">{{ article.content | safe }}</div>
+
+        {% if article.url %}
+        <div class="article-source">
+            <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer" class="original-link">原始链接</a>
+        </div>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/common.js') }}"></script>
+    <script>
+        // 移动端菜单和主题切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            // 添加主题切换功能
+            const themeToggle = document.getElementById('theme-toggle');
+            const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
+            const body = document.body;
+            
+            // 检查本地存储中的主题偏好
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                body.classList.add(savedTheme);
+            }
+            
+            function toggleTheme() {
+                body.classList.toggle('dark');
+                const isDark = body.classList.contains('dark');
+                localStorage.setItem('theme', isDark ? 'dark' : '');
+            }
+            
+            themeToggle?.addEventListener('click', toggleTheme);
+            mobileThemeToggle?.addEventListener('click', toggleTheme);
+            
+            // 移动端菜单功能
+            const hamburger = document.getElementById('hamburger');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const closeMenu = document.getElementById('close-menu-btn');
+            const backdrop = document.getElementById('mobile-menu-backdrop');
+            
+            function openMobileMenu() {
+                mobileMenu.classList.add('active');
+                backdrop.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenu() {
+                mobileMenu.classList.remove('active');
+                backdrop.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+            
+            hamburger?.addEventListener('click', openMobileMenu);
+            closeMenu?.addEventListener('click', closeMobileMenu);
+            backdrop?.addEventListener('click', closeMobileMenu);
+        });
+    </script>
+</body>
+</html>

@@ -483,6 +483,22 @@
             background-color: var(--vp-c-bg-mute);
             color: var(--vp-c-text-light-1);
         }
+
+        .search-loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .material-icons.spin {
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 
     <!-- MD3 Extended FAB 搜索按钮 -->
@@ -507,6 +523,9 @@
                     <span class="material-icons">search</span>
                 </span>
                 <input type="text" class="search-input" id="searchInput" placeholder="输入关键词搜索..." autocomplete="off" />
+            </div>
+            <div class="search-loading" id="searchLoading">
+                <span class="material-icons spin" style="font-size: 36px; color: var(--vp-c-blue);">autorenew</span>
             </div>
             <div class="search-results" id="searchResults"></div>
         </div>
@@ -566,6 +585,7 @@
 
                 if (query.length === 0) {
                     searchResults.innerHTML = '';
+                    document.getElementById('searchLoading').style.display = 'none';
                     return;
                 }
 
@@ -577,13 +597,21 @@
 
             // 执行搜索
             async function performSearch(query) {
+                // 显示加载指示器，隐藏结果区域
+                document.getElementById('searchLoading').style.display = 'block';
+                searchResults.innerHTML = '';
+
                 try {
                     const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
                     const results = await response.json();
 
+                    // 隐藏加载指示器，显示结果
+                    document.getElementById('searchLoading').style.display = 'none';
                     displaySearchResults(results);
                 } catch (error) {
                     console.error('搜索出错:', error);
+                    // 隐藏加载指示器，显示错误信息
+                    document.getElementById('searchLoading').style.display = 'none';
                     searchResults.innerHTML = '<div class="result-item">搜索出现错误，请稍后再试</div>';
                 }
             }
@@ -605,9 +633,8 @@
                         <div class="result-content">${result.content ? result.content.substring(0, 100) + '...' : ''}</div>
                     `;
                     resultItem.addEventListener('click', function() {
-                        // 在新标签页中打开文章详情（这里可以改为具体的文章详情页面）
-                        // 对于现在，我们只是显示文章内容在alert中
-                        alert(`标题: ${result.title}\n\n内容: ${result.content ? result.content.substring(0, 200) + '...' : '无内容'}`);
+                        // 在新页面中打开文章详情
+                        window.open(`/article/${result.id}`, '_blank');
                     });
                     searchResults.appendChild(resultItem);
                 });

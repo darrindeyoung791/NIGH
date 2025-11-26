@@ -63,5 +63,12 @@ def search():
         results = []
     return jsonify(results)
 
+
+@app.route('/article/<string:article_id>')
+def article_detail(article_id):
+    """Display a single article by its ID"""
+    article = Article.query.filter_by(id=article_id).first_or_404()
+    return render_template('article_detail.html', article=article)
+
 if __name__ == '__main__':
     app.run(debug=True)
