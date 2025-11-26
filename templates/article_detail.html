@@ -23,6 +23,7 @@
 
         .article-header {
             margin-bottom: 2rem;
+            padding-top: 2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--vp-c-border);
         }
@@ -187,10 +188,6 @@
     </header>
 
     <main class="article-container">
-        <button class="btn btn-outline article-back-button" onclick="window.history.back()">
-            <span class="material-icons">arrow_back</span> 返回
-        </button>
-        
         <div class="article-header">
             <h1 class="article-title">{{ article.title or '无标题' }}</h1>
             <div class="article-meta">
