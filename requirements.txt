@@ -4,3 +4,4 @@ python-dotenv==1.0.0
 mysql-connector-python
 pandas
 PyMySQL
+cryptography
