@@ -76,10 +76,12 @@
                     <h1>全球高中新颖洞察</h1>
                 </a>
             </div>
-            <div class="nav-center">
-                <div class="nav-links">
-                    <!-- 空的导航链接区域，保持布局一致 -->
-                </div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link">仪表板</a>
+                <a href="#" class="nav-link">功能</a>
+                <a href="#" class="nav-link">数据</a>
+                <a href="#" class="nav-link">AI解读</a>
             </div>
             <div class="auth-buttons">
                 <div class="theme-toggle" id="theme-toggle">
@@ -125,6 +127,13 @@
                         <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
                     </svg>
                 </div>
+            </div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link">仪表板</a>
+                <a href="#" class="nav-link">功能</a>
+                <a href="#" class="nav-link">数据</a>
+                <a href="#" class="nav-link">AI解读</a>
             </div>
             <div class="auth-buttons">
                 <a href="{{ url_for('register') }}" class="btn btn-outline">注册</a>

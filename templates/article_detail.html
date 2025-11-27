@@ -117,14 +117,12 @@
                     <h1>全球高中新颖洞察</h1>
                 </a>
             </div>
-            <div class="nav-center">
-                <div class="nav-links">
-                    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
-                    <a href="{{ url_for('dashboard') }}" class="nav-link">仪表板</a>
-                    <a href="#" class="nav-link">功能</a>
-                    <a href="#" class="nav-link">数据</a>
-                    <a href="#" class="nav-link">AI解读</a>
-                </div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link">仪表板</a>
+                <a href="#" class="nav-link">功能</a>
+                <a href="#" class="nav-link">数据</a>
+                <a href="#" class="nav-link">AI解读</a>
             </div>
             <div class="auth-buttons">
                 <div class="theme-toggle" id="theme-toggle">
@@ -214,6 +212,36 @@
         </div>
         {% endif %}
     </main>
+
+        <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>全球高中新颖洞察</h3>
+                    <p>NIGH (<b>N</b>ovel <b>I</b>nsights into <b>G</b>lobal <b>H</b>igh Schools)</p>
+                    <p>管理高校及其信息的系统，结合大语言模型和数据可视化功能</p>
+                </div>
+                <div class="footer-section">
+                    <h4>功能</h4>
+                    <ul>
+                        <li><a href="#">数据查询</a></li>
+                        <li><a href="#">可视化分析</a></li>
+                        <li><a href="#">AI解读</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>支持</h4>
+                    <ul>
+                        <li><a href="#">帮助中心</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 全球高中新颖洞察.</p>
+            </div>
+        </div>
+    </footer>
 
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <script>

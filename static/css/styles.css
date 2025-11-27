@@ -292,14 +292,11 @@ p {
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  margin-left: 2rem; /* Add 2rem spacing from nav-brand */
 }
 
 .nav-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  margin: 0 2rem;
+  display: none; /* Hide the center area since we're moving nav-links next to nav-brand */
 }
 
 .nav-link {
@@ -334,6 +331,7 @@ p {
   display: flex;
   gap: 0.8rem;
   align-items: center;
+  margin-left: auto; /* Push to the right side */
 }
 
 .auth-buttons .theme-toggle {
@@ -893,11 +891,7 @@ footer {
   }
 
   .nav-center {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1;
-    margin: 0 2rem;
+    display: none; /* Hide the center area since we're moving nav-links next to nav-brand */
   }
 
   .nav-links {
@@ -910,6 +904,7 @@ footer {
     display: flex;
     gap: 0.8rem;
     align-items: center;
+    margin-left: auto; /* Push to the right side */
   }
 
   .theme-toggle {
