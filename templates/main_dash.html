@@ -123,6 +123,120 @@
                 min-height: 450px;
             }
         }
+
+        /* AI智能搜索样式 */
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 20px auto;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            display: flex;
+            width: 100%;
+        }
+
+        #search-input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 24px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+            flex: 1; /* Take up remaining space */
+        }
+
+        #search-input:focus {
+            border-color: #1e80ff;
+        }
+
+
+        /* 热搜下拉列表（微博风格） */
+        .hot-search-dropdown {
+            position: absolute;
+            top: calc(100% + 8px); /* Position directly below the search input with a small gap */
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: none;
+            z-index: 1000;
+            width: 100%; /* Match the search input width */
+        }
+
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-header h4 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .refresh-btn {
+            color: #1e80ff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .hot-list {
+            padding: 8px 0;
+        }
+
+        .hot-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .hot-item:hover {
+            background: #f5f5f5;
+        }
+
+        .hot-rank {
+            width: 30px;
+            text-align: center;
+            font-weight: bold;
+            color: #ff3852;
+            font-size: 18px;
+        }
+
+        .hot-content {
+            flex: 1;
+        }
+
+        .hot-title {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .hot-stats {
+            font-size: 12px;
+            color: #999;
+        }
+
+        #search-btn {
+            margin-left: 10px;
+            padding: 0 24px;
+            background: #1e80ff;
+            color: white;
+            border: none;
+            border-radius: 24px;
+            cursor: pointer;
+            font-size: 16px;
+            height: 40px; /* Match the input height */
+            align-self: center; /* Align with the input */
+        }
     </style>
 </head>
 <body>
@@ -206,6 +320,27 @@
         <div class="dashboard-header">
             <h1>数据可视化仪表板</h1>
             <div class="showTime" id="currentTime"></div>
+
+            <!-- AI智能搜索框 -->
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="请输入搜索内容..."
+                        autocomplete="off"
+                    />
+                    <button id="search-btn">搜索</button>
+                </div>
+                <!-- 热搜下拉列表（微博风格） -->
+                <div id="hot-search-dropdown" class="hot-search-dropdown">
+                    <div class="dropdown-header">
+                        <h4>热搜榜</h4>
+                        <div class="refresh-btn">换一换</div>
+                    </div>
+                    <div class="hot-list"></div>
+                </div>
+            </div>
         </div>
 
         <div class="dashboard-grid">
@@ -1154,6 +1289,153 @@
                 ageChart.resize();
             });
         };
+
+        // 热搜功能实现
+        class HotSearch {
+            constructor() {
+                this.searchInput = document.getElementById('search-input');
+                this.hotDropdown = document.getElementById('hot-search-dropdown');
+                this.hotList = this.hotDropdown.querySelector('.hot-list');
+                this.refreshBtn = this.hotDropdown.querySelector('.refresh-btn');
+                this.hotData = [];
+
+                this.init();
+            }
+
+            async init() {
+                // 获取热搜数据
+                await this.fetchHotSearchData();
+
+                // 初始化下拉列表
+                this.initDropdown();
+
+                // 绑定事件
+                this.bindEvents();
+            }
+
+            // 模拟获取热搜数据（实际开发中替换为真实API）
+            async fetchHotSearchData() {
+                // 这里模拟API请求
+                this.hotData = [
+                    { title: "全球顶尖高中排名", heat: 1250000, rank: 1 },
+                    { title: "国际课程体系对比", heat: 980000, rank: 2 },
+                    { title: "留学申请趋势分析", heat: 850000, rank: 3 },
+                    { title: "高中教育创新模式", heat: 720000, rank: 4 },
+                    { title: "全球IB学校分布", heat: 650000, rank: 5 },
+                    { title: "AP课程选课指南", heat: 540000, rank: 6 },
+                    { title: "国际学校师资力量", heat: 430000, rank: 7 },
+                    { title: "高中学生心理健康", heat: 380000, rank: 8 }
+                ];
+            }
+
+            initDropdown() {
+                this.hotList.innerHTML = '';
+
+                this.hotData.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'hot-item';
+                    div.innerHTML = `
+                        <div class="hot-rank">${item.rank}</div>
+                        <div class="hot-content">
+                            <div class="hot-title">${item.title}</div>
+                            <div class="hot-stats">${this.formatHeat(item.heat)} 热度</div>
+                        </div>
+                    `;
+                    div.dataset.keyword = item.title;
+                    this.hotList.appendChild(div);
+                });
+            }
+
+            bindEvents() {
+                // 输入框聚焦时显示下拉列表
+                this.searchInput.addEventListener('focus', () => {
+                    if (this.searchInput.value === '') {
+                        this.hotDropdown.style.display = 'block';
+                    }
+                });
+
+                // 输入框失焦时隐藏下拉列表
+                this.searchInput.addEventListener('blur', (e) => {
+                    // 延迟隐藏，确保能点击到热搜词
+                    setTimeout(() => {
+                        if (!this.hotDropdown.contains(document.activeElement)) {
+                            this.hotDropdown.style.display = 'none';
+                        }
+                    }, 200);
+                });
+
+                // Also hide dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!this.searchInput.contains(e.target) &&
+                        !this.hotDropdown.contains(e.target) &&
+                        !e.target.closest('#search-btn')) {
+                        this.hotDropdown.style.display = 'none';
+                    }
+                });
+
+                // 点击热搜词
+                this.hotList.addEventListener('click', (e) => {
+                    const hotItem = e.target.closest('.hot-item');
+                    if (hotItem) {
+                        const keyword = hotItem.dataset.keyword;
+                        this.searchInput.value = keyword;
+                        this.performSearch(keyword);
+                        this.hotDropdown.style.display = 'none';
+                    }
+                });
+
+                // 换一换功能
+                this.refreshBtn.addEventListener('click', async () => {
+                    // 实际开发中重新请求数据
+                    await this.fetchHotSearchData();
+                    this.initDropdown();
+                });
+
+                // 搜索按钮点击
+                document.getElementById('search-btn').addEventListener('click', () => {
+                    this.performSearch(this.searchInput.value);
+                });
+
+                // 回车搜索
+                this.searchInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        this.performSearch(this.searchInput.value);
+                    }
+                });
+            }
+
+            performSearch(keyword) {
+                if (!keyword.trim()) return;
+
+                console.log('搜索关键词:', keyword);
+                // 这里添加实际的搜索逻辑
+                // 例如：window.location.href = `/search?q=${encodeURIComponent(keyword)}`;
+
+                // 对于仪表板，我们可以执行特定的搜索功能
+                // 这里可以集成到现有的搜索功能或创建新的接口
+                fetch(`/search?q=${encodeURIComponent(keyword)}`)
+                    .then(response => response.json())
+                    .then(results => {
+                        console.log('搜索结果:', results);
+                        // 可以在这里更新图表或显示结果
+                    })
+                    .catch(error => {
+                        console.error('搜索出错:', error);
+                    });
+            }
+
+            formatHeat(heat) {
+                if (heat >= 10000) {
+                    return (heat / 10000).toFixed(1) + '万';
+                }
+                return heat;
+            }
+        }
+
+        // 初始化热搜功能
+        document.addEventListener('DOMContentLoaded', () => {
+            new HotSearch();
+        });
     </script>
 </body>
 </html>
