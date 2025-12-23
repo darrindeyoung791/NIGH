@@ -395,8 +395,19 @@ p {
   overflow: hidden;
 }
 
+.hero-content h1 {
+  margin-bottom: 1.5rem;
+  background: linear-gradient(90deg, var(--vp-c-blue), var(--vp-c-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  white-space: nowrap;
+  display: inline-block;
+}
+
 .hero-content {
-  max-width: 800px;
+  width: 100%;
+  max-width: 1200px;
   padding: 2rem;
   z-index: 2;
 }
@@ -407,6 +418,7 @@ p {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  white-space: nowrap;
 }
 
 .hero-content p {

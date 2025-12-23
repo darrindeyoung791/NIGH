@@ -237,6 +237,38 @@
             height: 40px; /* Match the input height */
             align-self: center; /* Align with the input */
         }
+
+        /* Full-width for arrow layer SVG */
+        #renderArrowLayer {
+            width: 100% !important;
+            left: 0 !important;
+        }
+
+        /* Alternative approach for any arrow layer SVG in chart containers */
+        .chart-container svg[id*="renderArrowLayer"],
+        .dashboard-chart-container svg[id*="renderArrowLayer"] {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* More specific targeting for ECharts generated SVG elements */
+        .chart-container #renderArrowLayer,
+        #renderArrowLayer {
+            width: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+        }
+
+        /* Handle positioning context without overriding existing styles */
+        .chart-container .zr-canvas-wrapper #renderArrowLayer,
+        .zr-canvas-wrapper #renderArrowLayer {
+            width: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+            position: absolute !important;
+            top: auto !important;
+            bottom: auto !important;
+        }
     </style>
 </head>
 <body>
@@ -757,16 +789,16 @@
             async fetchHotSearchData() {
                 // 这里模拟API请求 - now showing 10 items (5 per column)
                 this.hotData = [
-                    { title: "全球顶尖高中排名", heat: 1250000, rank: 1 },
-                    { title: "国际课程体系对比", heat: 980000, rank: 2 },
-                    { title: "留学申请趋势分析", heat: 850000, rank: 3 },
-                    { title: "高中教育创新模式", heat: 720000, rank: 4 },
-                    { title: "全球IB学校分布", heat: 650000, rank: 5 },
-                    { title: "AP课程选课指南", heat: 540000, rank: 6 },
-                    { title: "国际学校师资力量", heat: 430000, rank: 7 },
-                    { title: "高中学生心理健康", heat: 380000, rank: 8 },
-                    { title: "国际教育发展趋势", heat: 320000, rank: 9 },
-                    { title: "海外大学申请攻略", heat: 280000, rank: 10 }
+                            { title: "Global Top High School Rankings", heat: 1250000, rank: 1 },
+                            { title: "International Curriculum Systems Comparison", heat: 980000, rank: 2 },
+                            { title: "Study Abroad Application Trend Analysis", heat: 850000, rank: 3 },
+                            { title: "High School Education Innovation Models", heat: 720000, rank: 4 },
+                            { title: "Global IB School Distribution", heat: 650000, rank: 5 },
+                            { title: "AP Course Selection Guide", heat: 540000, rank: 6 },
+                            { title: "International School Faculty Strength", heat: 430000, rank: 7 },
+                            { title: "High School Student Mental Health", heat: 380000, rank: 8 },
+                            { title: "International Education Development Trends", heat: 320000, rank: 9 },
+                            { title: "Overseas University Application Strategies", heat: 280000, rank: 10 }
                 ];
             }
 
@@ -1616,6 +1648,27 @@
         document.addEventListener('DOMContentLoaded', () => {
             new HotSearch();
         });
+
+        // Function to adjust the arrow layer SVG width
+        function adjustArrowLayerWidth() {
+            const arrowLayer = document.getElementById('renderArrowLayer');
+            if (arrowLayer) {
+                // Set the SVG width to match the page width
+                arrowLayer.style.width = '100%';
+                arrowLayer.style.left = '0';
+
+                // If it's positioned absolutely, ensure it spans the full width
+                if (window.getComputedStyle(arrowLayer).position === 'absolute') {
+                    arrowLayer.style.right = '0';
+                }
+            }
+        }
+
+        // Run after the charts are initialized
+        setTimeout(adjustArrowLayerWidth, 100);
+
+        // Also run whenever the window is resized
+        window.addEventListener('resize', adjustArrowLayerWidth);
     </script>
 </body>
 </html>

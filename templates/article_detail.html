@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ article.title }} - 全球高中新颖洞察</title>
+    <title>{{ article.title }} - 多语言国际中等教育情报系统</title>
     <!-- Google Fonts: Inter and Noto Sans SC -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -114,7 +114,7 @@
             <div class="nav-brand">
                 <a href="{{ url_for('index') }}" class="nav-brand-link">
                     <img src="{{ url_for('static', filename='img/favicon/NIGH.png') }}" alt="NIGH Logo" class="logo">
-                    <h1>全球高中新颖洞察</h1>
+                    <h1>多语言国际中等教育情报系统</h1>
                 </a>
             </div>
             <div class="nav-center">
@@ -206,7 +206,7 @@
             </div>
         </div>
         
-        <div class="article-content">{{ article.content | safe }}</div>
+        <div class="article-content" id="article-content">{{ article.content | safe }}</div>
 
         {% if article.url %}
         <div class="article-source">
@@ -223,43 +223,61 @@
             const themeToggle = document.getElementById('theme-toggle');
             const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
             const body = document.body;
-            
+
             // 检查本地存储中的主题偏好
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme) {
                 body.classList.add(savedTheme);
             }
-            
+
             function toggleTheme() {
                 body.classList.toggle('dark');
                 const isDark = body.classList.contains('dark');
                 localStorage.setItem('theme', isDark ? 'dark' : '');
             }
-            
+
             themeToggle?.addEventListener('click', toggleTheme);
             mobileThemeToggle?.addEventListener('click', toggleTheme);
-            
+
             // 移动端菜单功能
             const hamburger = document.getElementById('hamburger');
             const mobileMenu = document.getElementById('mobile-menu');
             const closeMenu = document.getElementById('close-menu-btn');
             const backdrop = document.getElementById('mobile-menu-backdrop');
-            
+
             function openMobileMenu() {
                 mobileMenu.classList.add('active');
                 backdrop.style.display = 'block';
                 document.body.style.overflow = 'hidden';
             }
-            
+
             function closeMobileMenu() {
                 mobileMenu.classList.remove('active');
                 backdrop.style.display = 'none';
                 document.body.style.overflow = '';
             }
-            
+
             hamburger?.addEventListener('click', openMobileMenu);
             closeMenu?.addEventListener('click', closeMobileMenu);
             backdrop?.addEventListener('click', closeMobileMenu);
+
+            // 处理文章内容中的换行符
+            const articleContentElement = document.getElementById('article-content');
+            if (articleContentElement) {
+                // 获取原始HTML内容
+                const originalContent = articleContentElement.innerHTML;
+
+                // 处理所有可能的换行符格式，包括 /n、\n、\\n 等
+                let formattedContent = originalContent;
+                formattedContent = formattedContent.replace(/\/n/g, '<br>');
+                formattedContent = formattedContent.replace(/\\n/g, '<br>');
+                formattedContent = formattedContent.replace(/\n/g, '<br>');
+
+                // 如果内容已更改，则更新元素
+                if (formattedContent !== originalContent) {
+                    articleContentElement.innerHTML = formattedContent;
+                }
+            }
         });
     </script>
 </body>
