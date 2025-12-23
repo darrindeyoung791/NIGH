@@ -552,8 +552,9 @@ p {
   align-items: flex-end;
   justify-content: space-around;
   padding: 20px;
-  box-shadow: var(--vp-shadow-2);
-  border: 1px solid var(--vp-c-border);
+  /* Remove card-like border and shadow for inline visualizations */
+  box-shadow: none;
+  border: none;
 }
 
 .chart-bars {

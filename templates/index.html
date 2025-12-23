@@ -146,13 +146,7 @@
                     <div class="data-viz-visual">
                         <!-- 这里可以放置数据可视化图表的占位符 -->
                         <div class="data-chart-placeholder">
-                            <div class="chart-bars">
-                                <div class="bar" style="height: 70%;"></div>
-                                <div class="bar" style="height: 90%;"></div>
-                                <div class="bar" style="height: 60%;"></div>
-                                <div class="bar" style="height: 85%;"></div>
-                                <div class="bar" style="height: 75%;"></div>
-                            </div>
+                            <div id="viz1" style="width:100%;height:300px;"></div>
                         </div>
                     </div>
                 </div>
@@ -191,13 +185,7 @@
                     <div class="data-viz-visual">
                         <!-- Global comparison visualization placeholder -->
                         <div class="data-chart-placeholder">
-                            <div class="chart-bars">
-                                <div class="bar" style="height: 70%; background: linear-gradient(to top, var(--vp-c-purple), var(--vp-c-purple-light));"></div>
-                                <div class="bar" style="height: 90%; background: linear-gradient(to top, var(--vp-c-purple), var(--vp-c-purple-light));"></div>
-                                <div class="bar" style="height: 85%; background: linear-gradient(to top, var(--vp-c-purple), var(--vp-c-purple-light));"></div>
-                                <div class="bar" style="height: 75%; background: linear-gradient(to top, var(--vp-c-purple), var(--vp-c-purple-light));"></div>
-                                <div class="bar" style="height: 88%; background: linear-gradient(to top, var(--vp-c-purple), var(--vp-c-purple-light));"></div>
-                            </div>
+                            <div id="viz2" style="width:100%;height:300px;"></div>
                         </div>
                     </div>
                     <div class="data-viz-text">
@@ -230,13 +218,7 @@
                     <div class="data-viz-visual">
                         <!-- Trend analysis visualization placeholder -->
                         <div class="data-chart-placeholder">
-                            <div class="chart-bars">
-                                <div class="bar" style="height: 60%; background: linear-gradient(to top, var(--vp-c-yellow), var(--vp-c-yellow-light));"></div>
-                                <div class="bar" style="height: 70%; background: linear-gradient(to top, var(--vp-c-yellow), var(--vp-c-yellow-light));"></div>
-                                <div class="bar" style="height: 85%; background: linear-gradient(to top, var(--vp-c-yellow), var(--vp-c-yellow-light));"></div>
-                                <div class="bar" style="height: 90%; background: linear-gradient(to top, var(--vp-c-yellow), var(--vp-c-yellow-light));"></div>
-                                <div class="bar" style="height: 95%; background: linear-gradient(to top, var(--vp-c-yellow), var(--vp-c-yellow-light));"></div>
-                            </div>
+                            <div id="viz3" style="width:100%;height:300px;"></div>
                         </div>
                     </div>
                 </div>
@@ -277,5 +259,49 @@
 
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <script src="{{ url_for('static', filename='js/typewriter.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Viz1: simple column chart
+            try {
+                var v1 = echarts.init(document.getElementById('viz1'));
+                var opt1 = {
+                    xAxis: { type: 'category', data: ['A','B','C','D','E'] },
+                    yAxis: { type: 'value' },
+                    series: [{ type: 'bar', data: [70,90,60,85,75], itemStyle: { color: '#5470c6' } }],
+                    tooltip: { trigger: 'axis' }
+                };
+                v1.setOption(opt1);
+            } catch(e) {}
+
+            // Viz2: pie chart for global comparison
+            try {
+                var v2 = echarts.init(document.getElementById('viz2'));
+                var opt2 = {
+                    tooltip: { trigger: 'item' },
+                    legend: { orient: 'vertical', left: 'left' },
+                    series: [{ name: '地区', type: 'pie', radius: '60%', data: [
+                        { value: 40, name: '美国' },
+                        { value: 25, name: '中国' },
+                        { value: 20, name: '英国' },
+                        { value: 15, name: '其他' }
+                    ] }]
+                };
+                v2.setOption(opt2);
+            } catch(e) {}
+
+            // Viz3: trend line chart
+            try {
+                var v3 = echarts.init(document.getElementById('viz3'));
+                var opt3 = {
+                    xAxis: { type: 'category', data: ['2019','2020','2021','2022','2023'] },
+                    yAxis: { type: 'value' },
+                    series: [{ type: 'line', data: [60,70,85,90,95], smooth: true, lineStyle: { color: '#f39c12' } }],
+                    tooltip: { trigger: 'axis' }
+                };
+                v3.setOption(opt3);
+            } catch(e) {}
+        });
+    </script>
 </body>
 </html>
