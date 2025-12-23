@@ -502,9 +502,19 @@
             height: 100%;
             background-color: rgba(0,0,0,0.5);
             z-index: 1001;
-            display: none;
+            display: flex;
             justify-content: center;
             align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 220ms ease, visibility 220ms ease;
+        }
+
+        .search-modal.open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
         }
 
         .search-box {
@@ -517,6 +527,14 @@
             position: relative;
             border: 1px solid var(--vp-c-border);
             min-width: 300px;
+            transform: translateY(-10px) scale(0.98);
+            transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease;
+            opacity: 0;
+        }
+
+        .search-modal.open .search-box {
+            transform: translateY(0) scale(1);
+            opacity: 1;
         }
 
         .search-header {
@@ -763,7 +781,7 @@
                 </button>
             </div>
             <div class="search-info-text">
-                请<a href="/login" class="login-link">登录</a>以启用 AI
+                请<a href="/login" class="login-link">登录</a>以启用 AI 深度搜索
             </div>
             <div class="search-input-container">
                 <span class="search-input-icon">
@@ -925,10 +943,11 @@
             const searchResults = document.getElementById('searchResults');
             const hotSearchDropdown = document.getElementById('hot-search-dropdown-modal');
 
-            // 打开搜索框
+            // 打开搜索框（使用 .open 切换以启用淡入淡出动画）
             searchTrigger.addEventListener('click', function() {
-                searchModal.style.display = 'flex';
-                searchInput.focus();
+                searchModal.classList.add('open');
+                // focus after animation starts for smoother UX
+                setTimeout(function() { searchInput.focus(); }, 160);
 
                 // 显示热搜榜，如果输入框为空
                 if (searchInput.value === '') {
@@ -940,19 +959,24 @@
 
             // 关闭搜索框
             closeSearch.addEventListener('click', function() {
-                searchModal.style.display = 'none';
-                searchInput.value = '';
-                searchResults.innerHTML = '';
-                hotSearchDropdown.style.display = 'none';
+                searchModal.classList.remove('open');
+                // clear inputs after animation to avoid jank
+                setTimeout(function() {
+                    searchInput.value = '';
+                    searchResults.innerHTML = '';
+                    hotSearchDropdown.style.display = 'none';
+                }, 220);
             });
 
             // 点击模态框背景关闭
             searchModal.addEventListener('click', function(e) {
                 if (e.target === searchModal) {
-                    searchModal.style.display = 'none';
-                    searchInput.value = '';
-                    searchResults.innerHTML = '';
-                    hotSearchDropdown.style.display = 'none';
+                    searchModal.classList.remove('open');
+                    setTimeout(function() {
+                        searchInput.value = '';
+                        searchResults.innerHTML = '';
+                        hotSearchDropdown.style.display = 'none';
+                    }, 220);
                 }
             });
 
@@ -965,7 +989,6 @@
                 if (query.length === 0) {
                     searchResults.innerHTML = '';
                     document.getElementById('searchLoading').style.display = 'none';
-
                     // Show hot search if input is empty
                     hotSearchDropdown.style.display = 'block';
                     return;
@@ -1039,6 +1062,7 @@
             // 各国学校数量饼图
             const schoolCountChart = echarts.init(document.getElementById('schoolCountChart'));
             const schoolCountOption = {
+                backgroundColor: 'transparent',
                 title: {
                     text: '共统计排名前180所',
                     subtext: '',
@@ -1202,6 +1226,7 @@
                 shadowColor: 'rgba(0,0,0,0.3)'
             };
             const subjectOption = {
+                backgroundColor: 'transparent',
                 color: ['#5470c6', '#91cc75', '#fac858'],
                 legend: {
                     top: 10,
@@ -1370,6 +1395,7 @@
             // 学费统计柱状图
             const tuitionChart = echarts.init(document.getElementById('tuitionChart'));
             const tuitionOption = {
+                backgroundColor: 'transparent',
                 title: {
                     text: '',
                     left: 'center'
@@ -1417,6 +1443,7 @@
             const counts = [2, 5, 8, 12, 15, 18, 22, 25, 20, 15, 10, 8, 5, 3, 1];
             const cumulative = [2, 7, 15, 27, 42, 60, 82, 107, 127, 142, 152, 160, 165, 168, 169];
             const ageOption = {
+                backgroundColor: 'transparent',
                 title: {
                     text: '',
                     left: 'center'
@@ -1532,6 +1559,36 @@
                 ]
             };
             ageChart.setOption(ageOption);
+
+            // Theme application for dashboard charts
+            function applyDashboardChartTheme() {
+                var isDark = document.documentElement.classList.contains('dark');
+                var textColor = isDark ? '#e6e6e6' : '#1f2937';
+                var axisLineColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,24,39,0.12)';
+                var tooltipBg = isDark ? 'rgba(255,255,255,0.06)' : '#ffffff';
+
+                var themeOpts = {
+                    textStyle: { color: textColor },
+                    tooltip: { backgroundColor: tooltipBg, textStyle: { color: textColor } },
+                    xAxis: { axisLabel: { color: textColor }, axisLine: { lineStyle: { color: axisLineColor } } },
+                    yAxis: { axisLabel: { color: textColor }, axisLine: { lineStyle: { color: axisLineColor } } },
+                    legend: { textStyle: { color: textColor } }
+                };
+
+                try { schoolCountChart.setOption(themeOpts, false); } catch(e){}
+                try { subjectChart.setOption(themeOpts, false); } catch(e){}
+                try { tuitionChart.setOption(themeOpts, false); } catch(e){}
+                try { ageChart.setOption(themeOpts, false); } catch(e){}
+            }
+
+            // Apply initially and observe theme changes
+            applyDashboardChartTheme();
+            if (window.MutationObserver) {
+                var dashMo = new MutationObserver(function(muts) { muts.forEach(function(m){ if (m.attributeName === 'class') applyDashboardChartTheme(); }); });
+                dashMo.observe(document.documentElement, { attributes: true });
+            } else {
+                window.addEventListener('storage', function(e){ if (e.key && e.key.indexOf('theme') !== -1) applyDashboardChartTheme(); });
+            }
 
             // 监听窗口大小变化，调整图表大小
             window.addEventListener('resize', function() {

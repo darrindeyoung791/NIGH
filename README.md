@@ -1,4 +1,4 @@
-# 全球高中新颖洞察
+# 多语言国际中等教育情报系统
 
 NIGH (**N**ovel **I**nsights into **G**lobal **H**igh Schools)
 

@@ -90,18 +90,18 @@
     </header>
 
     <main>
-        <section class="hero-section">
+        <section class="hero-section fade-section">
             <div class="hero-content">
                 <h1>掌握全球中等教育情报的全新方式</h1>
                 <p>大语言模型、数据可视化、一站式便捷化数据查询</p>
                 <div class="hero-buttons">
                     <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-large">国内版</a>
-                    <a href="{{ url_for('dashboard') }}?version=foreign" class="btn btn-primary btn-large">国外版</a>
+                    <a href="{{ url_for('dashboard') }}?version=foreign" class="btn btn-outline btn-large">Global</a>
                 </div>
             </div>
         </section>
 
-        <section class="features-section">
+        <section class="features-section fade-section">
             <div class="container">
                 <h2>核心功能</h2>
                 <div class="features-grid">
@@ -130,7 +130,7 @@
             </div>
         </section>
 
-        <section class="data-visualization-section">
+        <section class="data-visualization-section fade-section">
             <div class="container">
                 <div class="data-viz-content">
                     <div class="data-viz-text">
@@ -153,7 +153,7 @@
             </div>
         </section>
 
-        <section class="ai-insights-section">
+        <section class="ai-insights-section fade-section">
             <div class="container">
                 <div class="data-viz-content">
                     <div class="data-viz-text">
@@ -179,7 +179,7 @@
             </div>
         </section>
 
-        <section class="global-comparison-section">
+        <section class="global-comparison-section fade-section">
             <div class="container">
                 <div class="data-viz-content">
                     <div class="data-viz-visual">
@@ -202,7 +202,7 @@
             </div>
         </section>
 
-        <section class="trend-analysis-section">
+        <section class="trend-analysis-section fade-section">
             <div class="container">
                 <div class="data-viz-content">
                     <div class="data-viz-text">
@@ -231,7 +231,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h3>全球高中新颖洞察</h3>
+                    <h3>多语言国际中等教育情报系统</h3>
                     <p>NIGH (<b>N</b>ovel <b>I</b>nsights into <b>G</b>lobal <b>H</b>igh Schools)</p>
                     <p>管理高校及其信息的系统，结合大语言模型和数据可视化功能</p>
                 </div>
@@ -252,7 +252,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 全球高中新颖洞察. NCNU.</p>
+                <p>&copy; 2025 多语言国际中等教育情报系统. NCNU.</p>
             </div>
         </div>
     </footer>
@@ -262,22 +262,24 @@
     <script src="{{ url_for('static', filename='js/echarts.min.js') }}"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Viz1: simple column chart
+            // Initialize charts and keep references so we can update theme dynamically
+            var v1, v2, v3;
+
             try {
-                var v1 = echarts.init(document.getElementById('viz1'));
-                var opt1 = {
+                v1 = echarts.init(document.getElementById('viz1'));
+                v1.setOption({
+                    backgroundColor: 'transparent',
                     xAxis: { type: 'category', data: ['A','B','C','D','E'] },
                     yAxis: { type: 'value' },
                     series: [{ type: 'bar', data: [70,90,60,85,75], itemStyle: { color: '#5470c6' } }],
                     tooltip: { trigger: 'axis' }
-                };
-                v1.setOption(opt1);
-            } catch(e) {}
+                });
+            } catch(e) { console.warn('viz1 init failed', e); }
 
-            // Viz2: pie chart for global comparison
             try {
-                var v2 = echarts.init(document.getElementById('viz2'));
-                var opt2 = {
+                v2 = echarts.init(document.getElementById('viz2'));
+                v2.setOption({
+                    backgroundColor: 'transparent',
                     tooltip: { trigger: 'item' },
                     legend: { orient: 'vertical', left: 'left' },
                     series: [{ name: '地区', type: 'pie', radius: '60%', data: [
@@ -286,21 +288,95 @@
                         { value: 20, name: '英国' },
                         { value: 15, name: '其他' }
                     ] }]
-                };
-                v2.setOption(opt2);
-            } catch(e) {}
+                });
+            } catch(e) { console.warn('viz2 init failed', e); }
 
-            // Viz3: trend line chart
             try {
-                var v3 = echarts.init(document.getElementById('viz3'));
-                var opt3 = {
+                v3 = echarts.init(document.getElementById('viz3'));
+                v3.setOption({
+                    backgroundColor: 'transparent',
                     xAxis: { type: 'category', data: ['2019','2020','2021','2022','2023'] },
                     yAxis: { type: 'value' },
                     series: [{ type: 'line', data: [60,70,85,90,95], smooth: true, lineStyle: { color: '#f39c12' } }],
                     tooltip: { trigger: 'axis' }
+                });
+            } catch(e) { console.warn('viz3 init failed', e); }
+
+            // Apply theme-aware text colors to charts
+            function applyChartTheme() {
+                var isDark = document.documentElement.classList.contains('dark');
+                var textColor = isDark ? '#e6e6e6' : '#1f2937';
+                var axisLineColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(17,24,39,0.12)';
+                var tooltipBg = isDark ? 'rgba(255,255,255,0.06)' : '#ffffff';
+
+                var themeOpts = {
+                    textStyle: { color: textColor },
+                    tooltip: { backgroundColor: tooltipBg, textStyle: { color: textColor } },
+                    xAxis: { axisLabel: { color: textColor }, axisLine: { lineStyle: { color: axisLineColor } } },
+                    yAxis: { axisLabel: { color: textColor }, axisLine: { lineStyle: { color: axisLineColor } } },
+                    legend: { textStyle: { color: textColor } }
                 };
-                v3.setOption(opt3);
-            } catch(e) {}
+
+                try { if (v1) v1.setOption(themeOpts, false); } catch(e){}
+                try { if (v2) v2.setOption(themeOpts, false); } catch(e){}
+                try { if (v3) v3.setOption(themeOpts, false); } catch(e){}
+            }
+
+            // Initial theme application
+            applyChartTheme();
+
+            // Watch for theme class changes to update charts
+            if (window.MutationObserver) {
+                var mo = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(m) {
+                        if (m.attributeName === 'class') applyChartTheme();
+                    });
+                });
+                mo.observe(document.documentElement, { attributes: true });
+            } else {
+                // Fallback: listen to storage changes (theme persisted there)
+                window.addEventListener('storage', function(e) { if (e.key && e.key.indexOf('theme') !== -1) applyChartTheme(); });
+            }
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script>
+        // Fade-on-scroll trigger using IntersectionObserver + anime.js fallback to CSS
+        document.addEventListener('DOMContentLoaded', function() {
+            var sections = document.querySelectorAll('.fade-section');
+            if (!sections || sections.length === 0) return;
+
+            function handleIntersect(entries, observer) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        var el = entry.target;
+                        if (window.anime) {
+                            anime.remove(el);
+                            anime({
+                                targets: el,
+                                opacity: [0, 1],
+                                translateY: [20, 0],
+                                duration: 700,
+                                easing: 'easeOutQuad'
+                            });
+                        } else {
+                            el.classList.add('in-view');
+                        }
+                        observer.unobserve(el);
+                    }
+                });
+            }
+
+            if ('IntersectionObserver' in window) {
+                var io = new IntersectionObserver(handleIntersect, { threshold: 0.12 });
+                sections.forEach(function(s) {
+                    s.style.opacity = 0;
+                    io.observe(s);
+                });
+            } else {
+                // Fallback: reveal all
+                sections.forEach(function(s) { s.classList.add('in-view'); });
+            }
         });
     </script>
 </body>
