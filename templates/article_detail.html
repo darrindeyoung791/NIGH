@@ -107,6 +107,106 @@
             }
         }
     </style>
+    <style>
+        /* AI summary modal styles */
+        .ai-summary-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+        }
+
+        .ai-summary-backdrop.active {
+            display: flex;
+        }
+
+        .ai-summary-panel {
+            width: 90%;
+            max-width: 640px;
+            background: var(--vp-c-bg-elv);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+            border: 1px solid var(--vp-c-border);
+            color: var(--vp-c-text-light-1);
+        }
+
+        .ai-summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .ai-summary-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .ai-summary-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--vp-c-text-light-2);
+        }
+    </style>
+    <style>
+        /* FAB style reused from main_dash (search-extended-fab) */
+        .search-extended-fab {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 1000;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: 64px;
+            min-width: 64px;
+            padding: 0 28px;
+            border: none;
+            border-radius: 16px;
+            color: white;
+            background: linear-gradient(135deg, #0066cc, #33ccff);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
+            cursor: pointer;
+            font-family: var(--vp-font-family-base);
+            font-size: 18px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            gap: 8px;
+        }
+
+        .dark .search-extended-fab {
+            background: linear-gradient(135deg, #004d99, #0099cc);
+        }
+
+        .search-extended-fab:hover {
+            background: linear-gradient(135deg, #0080ff, #66ddff);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.2);
+            transform: translateY(-2px);
+        }
+
+        .search-extended-fab:active {
+            transform: translateY(0);
+        }
+
+        .search-extended-fab .material-icons {
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .search-extended-fab {
+                bottom: 24px;
+                right: 24px;
+                height: 60px;
+                padding: 0 24px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -213,6 +313,24 @@
         {% endif %}
     </main>
 
+    <!-- AI 摘要 FAB and modal -->
+    <button class="search-extended-fab" id="aiSummaryFab" title="AI 摘要">
+        <span class="material-icons">auto_awesome</span>
+        <span>AI 摘要</span>
+    </button>
+
+    <div class="ai-summary-backdrop" id="aiSummaryBackdrop" aria-hidden="true">
+        <div class="ai-summary-panel" role="dialog" aria-modal="true" aria-labelledby="aiSummaryTitle">
+            <div class="ai-summary-header">
+                <div class="ai-summary-title" id="aiSummaryTitle">AI 摘要</div>
+                <button class="ai-summary-close" id="aiSummaryClose" aria-label="关闭">✕</button>
+            </div>
+            <div class="ai-summary-body">
+                <p>该功能正在开发中，稍后会展示文章的 AI 摘要结果。</p>
+            </div>
+        </div>
+    </div>
+
     <script src="{{ url_for('static', filename='js/common.js') }}"></script>
     <script>
         // 移动端菜单和主题切换功能
@@ -221,6 +339,12 @@
             const themeToggle = document.getElementById('theme-toggle');
             const mobileThemeToggle = document.getElementById('mobile-theme-toggle');
             const body = document.body;
+    <!-- AI 摘要 FAB (click does nothing yet) -->
+    <button class="search-extended-fab" id="aiSummaryFab" title="AI 摘要">
+        <span class="material-icons">auto_awesome</span>
+        <span>AI 摘要</span>
+    </button>
+
 
             // 检查本地存储中的主题偏好
             const savedTheme = localStorage.getItem('theme');
@@ -259,7 +383,7 @@
             closeMenu?.addEventListener('click', closeMobileMenu);
             backdrop?.addEventListener('click', closeMobileMenu);
 
-            // 处理文章内容中的换行符
+                // 处理文章内容中的换行符
             const articleContentElement = document.getElementById('article-content');
             if (articleContentElement) {
                 // 获取原始HTML内容
@@ -276,6 +400,33 @@
                     articleContentElement.innerHTML = formattedContent;
                 }
             }
+
+            // AI Summary FAB behavior: open modal (placeholder)
+            const aiFab = document.getElementById('aiSummaryFab');
+            const aiBackdrop = document.getElementById('aiSummaryBackdrop');
+            const aiClose = document.getElementById('aiSummaryClose');
+
+            function openAiModal() {
+                aiBackdrop.classList.add('active');
+                aiBackdrop.setAttribute('aria-hidden', 'false');
+            }
+
+            function closeAiModal() {
+                aiBackdrop.classList.remove('active');
+                aiBackdrop.setAttribute('aria-hidden', 'true');
+            }
+
+            aiFab?.addEventListener('click', function() {
+                openAiModal();
+            });
+
+            aiClose?.addEventListener('click', function() {
+                closeAiModal();
+            });
+
+            aiBackdrop?.addEventListener('click', function(e) {
+                if (e.target === aiBackdrop) closeAiModal();
+            });
         });
     </script>
 </body>
