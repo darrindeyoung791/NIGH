@@ -117,14 +117,12 @@
                     <h1>多语言国际中等教育情报系统</h1>
                 </a>
             </div>
-            <div class="nav-center">
-                <div class="nav-links">
-                    <a href="{{ url_for('index') }}" class="nav-link">首页</a>
-                    <a href="{{ url_for('dashboard') }}" class="nav-link">仪表板</a>
-                    <a href="#" class="nav-link">功能</a>
-                    <a href="#" class="nav-link">数据</a>
-                    <a href="#" class="nav-link">AI解读</a>
-                </div>
+            <div class="nav-links">
+                <a href="{{ url_for('index') }}" class="nav-link">首页</a>
+                <a href="{{ url_for('dashboard') }}" class="nav-link">仪表板</a>
+                <a href="#" class="nav-link">功能</a>
+                <a href="#" class="nav-link">数据</a>
+                <a href="#" class="nav-link">AI解读</a>
             </div>
             <div class="auth-buttons">
                 <div class="theme-toggle" id="theme-toggle">
@@ -205,7 +203,7 @@
                 {% endif %}
             </div>
         </div>
-        
+
         <div class="article-content" id="article-content">{{ article.content | safe }}</div>
 
         {% if article.url %}

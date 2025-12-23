@@ -189,7 +189,7 @@ p {
 /* Navigation */
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   padding: 1rem 2rem;
   position: fixed;
@@ -292,14 +292,12 @@ p {
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  margin-left: 24px; /* increased gap between brand and links */
+  margin-right: 24px; /* ensure spacing before auth-buttons */
 }
 
 .nav-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex: 1;
-  margin: 0 2rem;
+  display: none;
 }
 
 .nav-link {
@@ -334,6 +332,7 @@ p {
   display: flex;
   gap: 0.8rem;
   align-items: center;
+  margin-left: auto; /* push auth buttons to the far right */
 }
 
 .auth-buttons .theme-toggle {
