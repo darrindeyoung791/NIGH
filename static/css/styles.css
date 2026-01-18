@@ -603,7 +603,6 @@ p {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: var(--vp-shadow-2);
 }
 
 .chat-messages {

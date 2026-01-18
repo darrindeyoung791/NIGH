@@ -557,6 +557,52 @@
             text-align: center;
         }
 
+        /* Search scope toggle (title / full-text) */
+        .search-scope {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            color: var(--vp-c-text-light-2);
+        }
+        .search-scope label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+        }
+        .search-scope input[type="radio"] { display: none; }
+        .search-scope input[type="radio"]:checked + span {
+            background: var(--vp-c-blue);
+            color: #ffffff;
+            padding: 6px 10px;
+            border-radius: 999px;
+            box-shadow: 0 6px 18px rgba(0,122,204,0.18);
+        }
+        /* Dark theme selected style */
+        .dark .search-scope input[type="radio"]:checked + span {
+            background: var(--vp-c-blue-light);
+            color: #07203a;
+            box-shadow: 0 6px 18px rgba(34,170,255,0.12);
+        }
+        /* Highlight for matched terms */
+        .search-highlight {
+            background: var(--vp-c-blue);
+            color: #ffffff;
+            padding: 0 4px;
+            border-radius: 3px;
+        }
+        .dark .search-highlight {
+            background: var(--vp-c-yellow);
+            color: #07203a;
+        }
+
         .search-info-text .login-link {
             color: var(--vp-c-blue);
             text-decoration: none;
@@ -783,6 +829,16 @@
             <div class="search-info-text">
                 请<a href="/login" class="login-link">登录</a>以启用 AI 深度搜索
             </div>
+            <div class="search-scope" role="radiogroup" aria-label="搜索范围">
+                <label>
+                    <input type="radio" name="searchScope" value="title" checked />
+                    <span>仅搜索标题</span>
+                </label>
+                <label>
+                    <input type="radio" name="searchScope" value="full" />
+                    <span>全文搜索</span>
+                </label>
+            </div>
             <div class="search-input-container">
                 <span class="search-input-icon">
                     <span class="material-icons">search</span>
@@ -894,12 +950,18 @@
                 // 点击热搜词
                 this.hotList.addEventListener('click', (e) => {
                     const hotItem = e.target.closest('.hot-item-grid'); // Changed to use grid item class
-                    if (hotItem) {
-                        const keyword = hotItem.dataset.keyword;
-                        this.searchInput.value = keyword;
-                        this.performSearch(keyword);
-                        this.hotDropdown.style.display = 'none';
-                    }
+                        if (hotItem) {
+                            const keyword = hotItem.dataset.keyword;
+                            this.searchInput.value = keyword;
+                            this.searchInput.focus();
+                            // Prefer the global performSearch if available (setupSearch exposes it)
+                            if (window.performSearch) {
+                                window.performSearch(keyword);
+                            } else {
+                                this.performSearch(keyword);
+                            }
+                            this.hotDropdown.style.display = 'none';
+                        }
                 });
 
                 // 换一换功能
@@ -914,8 +976,12 @@
                 if (!keyword.trim()) return;
 
                 console.log('搜索关键词:', keyword);
-                // 这里添加实际的搜索逻辑
-                fetch(`/search?q=${encodeURIComponent(keyword)}`)
+                // 读取当前选择的搜索范围
+                const scopeEl = document.querySelector('input[name="searchScope"]:checked');
+                const scope = scopeEl ? scopeEl.value : 'title';
+
+                // 这里添加实际的搜索逻辑（携带 scope）
+                fetch(`/search?q=${encodeURIComponent(keyword)}&scope=${encodeURIComponent(scope)}`)
                     .then(response => response.json())
                     .then(results => {
                         console.log('搜索结果:', results);
@@ -1003,19 +1069,68 @@
                 }, 500);
             });
 
+            // 回车触发搜索，Esc 关闭模态框
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const query = this.value.trim();
+                    if (query.length === 0) {
+                        // show hot search if empty
+                        hotSearchDropdown.style.display = 'block';
+                    } else {
+                        performSearch(query);
+                    }
+                } else if (e.key === 'Escape') {
+                    // close modal with same animation flow
+                    searchModal.classList.remove('open');
+                    setTimeout(function() {
+                        searchInput.value = '';
+                        searchResults.innerHTML = '';
+                        hotSearchDropdown.style.display = 'none';
+                    }, 220);
+                }
+            });
+
+            // 全局 Esc 监听（当模态显示时也可关闭）
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && searchModal.classList.contains('open')) {
+                    searchModal.classList.remove('open');
+                    setTimeout(function() {
+                        searchInput.value = '';
+                        searchResults.innerHTML = '';
+                        hotSearchDropdown.style.display = 'none';
+                    }, 220);
+                }
+            });
+
+            // When user switches search scope, refresh results automatically if there's a query
+            document.querySelectorAll('input[name="searchScope"]').forEach(function(radio) {
+                radio.addEventListener('change', function() {
+                    const q = searchInput.value.trim();
+                    if (q.length > 0) {
+                        // small debounce
+                        clearTimeout(searchTimeout);
+                        searchTimeout = setTimeout(function() { performSearch(q); }, 120);
+                    }
+                });
+            });
+
             // 执行搜索
             async function performSearch(query) {
                 // 显示加载指示器，隐藏结果区域
                 document.getElementById('searchLoading').style.display = 'block';
                 searchResults.innerHTML = '';
+                // read scope selection (title | full)
+                const scopeEl = document.querySelector('input[name="searchScope"]:checked');
+                const scope = scopeEl ? scopeEl.value : 'title';
 
                 try {
-                    const response = await fetch(`/search?q=${encodeURIComponent(query)}`);
+                    const response = await fetch(`/search?q=${encodeURIComponent(query)}&scope=${encodeURIComponent(scope)}`);
                     const results = await response.json();
 
                     // 隐藏加载指示器，显示结果
                     document.getElementById('searchLoading').style.display = 'none';
-                    displaySearchResults(results);
+                        displaySearchResults(results, query);
                 } catch (error) {
                     console.error('搜索出错:', error);
                     // 隐藏加载指示器，显示错误信息
@@ -1025,7 +1140,23 @@
             }
 
             // 显示搜索结果
-            function displaySearchResults(results) {
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>"'`]/g, function(match) {
+                    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","`":"&#96;"})[match];
+                });
+            }
+
+            function highlightText(text, q) {
+                if (!text || !q) return escapeHtml(text);
+                // split on whitespace to highlight each token
+                const tokens = q.trim().split(/\s+/).filter(Boolean).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+                if (tokens.length === 0) return escapeHtml(text);
+                const pattern = new RegExp('(' + tokens.join('|') + ')', 'ig');
+                return escapeHtml(text).replace(pattern, '<span class="search-highlight">$1</span>');
+            }
+
+            function displaySearchResults(results, query) {
                 searchResults.innerHTML = '';
 
                 if (results.length === 0) {
@@ -1036,9 +1167,24 @@
                 results.forEach(result => {
                     const resultItem = document.createElement('div');
                     resultItem.className = 'result-item';
+                    // Highlight title and a short snippet from content
+                    const titleHtml = highlightText(result.title || '无标题', query);
+                    // create a snippet from content around the first match if possible
+                    let snippet = '';
+                    if (result.content) {
+                        const idx = result.content.toLowerCase().indexOf((query||'').toLowerCase());
+                        if (idx >= 0) {
+                            const start = Math.max(0, idx - 40);
+                            snippet = result.content.substring(start, start + 180);
+                        } else {
+                            snippet = result.content.substring(0, 150);
+                        }
+                    }
+                    const contentHtml = highlightText(snippet ? (snippet + (result.content && result.content.length > snippet.length ? '...' : '')) : '', query);
+
                     resultItem.innerHTML = `
-                        <div class="result-title">${result.title || '无标题'}</div>
-                        <div class="result-content">${result.content ? result.content.substring(0, 100) + '...' : ''}</div>
+                        <div class="result-title">${titleHtml}</div>
+                        <div class="result-content">${contentHtml}</div>
                     `;
                     resultItem.addEventListener('click', function() {
                         // 在新页面中打开文章详情
@@ -1047,6 +1193,9 @@
                     searchResults.appendChild(resultItem);
                 });
             }
+
+            // expose performSearch globally so ModalHotSearch can call it
+            window.performSearch = performSearch;
         }
 
         // 初始调用并设置定时器

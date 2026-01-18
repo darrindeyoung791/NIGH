@@ -52,15 +52,22 @@ def dashboard():
 @app.route('/search')
 def search():
     """Search endpoint that will allow searching articles"""
-    query = request.args.get('q', '')
-    if query:
-        # Search in the articles table
-        articles = Article.query.filter(
-            Article.title.contains(query) | Article.content.contains(query)
-        ).all()
-        results = [article.to_dict() for article in articles]
+    query = (request.args.get('q') or '').strip()
+    scope = request.args.get('scope', 'title')
+
+    if not query:
+        return jsonify([])
+
+    # Build filter based on scope
+    if scope == 'full':
+        filt = (Article.title.contains(query)) | (Article.content.contains(query))
     else:
-        results = []
+        # default: only search title
+        filt = Article.title.contains(query)
+
+    # Execute query, limit results for performance and order by newest
+    articles = Article.query.filter(filt).order_by(Article.created_at.desc()).limit(50).all()
+    results = [article.to_dict() for article in articles]
     return jsonify(results)
 
 
