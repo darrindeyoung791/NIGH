@@ -17,10 +17,11 @@
         .dashboard-container {
             margin-top: 60px;
             padding: 20px;
-            display: grid;
-            grid-template-columns: 60% 40%; /* map 60%, charts 40% */
+            display: flex;
+            flex-direction: column;
             gap: 20px;
-            align-items: start;
+            align-items: center; /* Center items horizontally */
+            width: 100%;
         }
 
         .dashboard-header {
@@ -40,56 +41,277 @@
             color: var(--vp-c-text-light-2);
         }
 
-        /* Dashboard grid becomes vertical on the right column and scrolls vertically */
+        /* Dashboard grid becomes horizontal and scrolls horizontally if needed */
         .dashboard-grid {
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             gap: 20px;
             margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 10px;
         }
 
         .dashboard-chart-container {
             background: var(--vp-c-bg-elv);
             border-radius: var(--vp-radius);
             padding: 20px;
-            box-shadow: var(--vp-shadow-2);
             border: 1px solid var(--vp-c-border);
-            transition: var(--transition);
+            flex: 1;
+            min-width: 300px; /* Minimum width for each chart */
+        }
+
+        /* Column container for the horizontal layout */
+        .dashboard-column {
+            overflow-x: auto;
+            padding: 0 0 10px 0; /* avoid scrollbar overlapping content */
             width: 100%;
         }
 
-        /* Right column scroll area */
-        .dashboard-column {
-            max-height: calc(100vh - 120px);
-            overflow-y: auto;
-            padding-right: 8px; /* avoid scrollbar overlapping content */
+        /* Container for map and search panel */
+        .map-with-search-container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1600px;
+            margin: 20px auto;
         }
 
-        /* Map on the left should stay visible while right column scrolls */
+        /* Map container */
         .map-container {
             display: flex;
-            flex-direction: column;
-            flex: 0 0 auto;
-            position: sticky;
-            top: 60px; /* account for fixed navbar height */
-            height: calc(100vh - 80px);
-            margin: 0;
+            flex: 1;
+            height: 600px;
             border-radius: var(--vp-radius);
             overflow: hidden;
             background: var(--vp-c-bg-elv-up);
-            padding: 0; /* header will supply internal padding */
+            padding: 0;
+            box-sizing: border-box;
         }
 
         .map-container iframe {
-            flex: 1 1 auto;
             width: 100%;
-            height: auto;
+            height: 100%;
             border: none;
         }
 
-        .dashboard-chart-container:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--vp-shadow-4);
+        /* Permanent search panel */
+        .permanent-search-panel {
+            flex: 0 0 400px; /* Fixed width for the search panel */
+            background: var(--vp-c-bg-elv);
+            border-radius: var(--vp-radius);
+            padding: 24px;
+            border: 1px solid var(--vp-c-border);
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            overflow: hidden;
+        }
+
+        .search-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .search-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: var(--vp-c-text-light-1);
+        }
+
+        .search-info-text {
+            color: var(--vp-c-text-light-2);
+            font-size: 0.875rem;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .search-info-text .login-link {
+            color: var(--vp-c-blue);
+            text-decoration: none;
+            font-weight: 500;
+            margin: 0 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+
+        .hot-search-link {
+            color: inherit;
+            text-decoration: none;
+        }
+
+
+        .result-title-link {
+            color: inherit;
+            text-decoration: none;
+        }
+
+
+        .search-input-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 16px 16px 16px 48px; /* Left padding for icon */
+            font-size: 16px;
+            border: 1px solid var(--vp-c-border);
+            border-radius: 8px;
+            background-color: var(--vp-c-bg);
+            color: var(--vp-c-text-light-1);
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--vp-c-blue);
+            box-shadow: 0 0 0 2px rgba(0, 122, 204, 0.2);
+        }
+
+        /* Make hot-search visually part of the same panel as the input */
+        #hot-search-permanent {
+            position: relative; /* keep inside .search-box flow */
+            top: auto;
+            left: auto;
+            right: auto;
+            background: var(--vp-c-bg); /* match input background for unified look */
+            border: 1px solid var(--vp-c-border);
+            border-radius: 8px; /* round corners */
+            display: block; /* Always show */
+            z-index: 1000;
+            width: 100%;
+            margin-top: 12px; /* space between input and hot search */
+            max-height: 300px; /* prevent overflow */
+            overflow-y: auto; /* Allow scrolling if needed */
+        }
+
+        .hot-list-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            gap: 4px; /* Reduced gap */
+            padding: 4px 0; /* Reduced padding */
+        }
+
+        .hot-item-grid {
+            display: flex;
+            align-items: center;
+            padding: 6px 12px; /* Reduced padding */
+            cursor: pointer;
+            transition: background 0.2s;
+            border-radius: 6px;
+            font-size: 14px; /* Smaller font size */
+        }
+
+
+        .hot-rank {
+            width: 24px; /* Reduced width */
+            text-align: center;
+            font-weight: bold;
+            color: #ff3852;
+            font-size: 14px; /* Smaller font size */
+        }
+
+        .hot-content {
+            flex: 1;
+        }
+
+        .hot-title {
+            font-size: 14px; /* Smaller font size */
+            margin-bottom: 2px; /* Reduced margin */
+        }
+
+        .hot-stats {
+            font-size: 11px; /* Smaller font size */
+            color: #999;
+        }
+
+        .search-input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--vp-c-text-light-2);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 24px;
+            width: 24px;
+            pointer-events: none;
+        }
+
+        .search-results {
+            flex: 1;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        /* Custom scrollbar for MD3 style */
+        .search-results::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .search-results::-webkit-scrollbar-track {
+            background: var(--vp-c-bg-mute);
+            border-radius: 4px;
+        }
+
+        .search-results::-webkit-scrollbar-thumb {
+            background: var(--vp-c-gray-light-3);
+            border-radius: 4px;
+        }
+
+
+        .result-item {
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: background-color 0.2s ease;
+        }
+
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-title {
+            font-weight: 500;
+            color: var(--vp-c-text-light-1);
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .result-content {
+            color: var(--vp-c-text-light-2);
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .search-loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .material-icons.spin {
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .dashboard-chart-container {
+            transition: none;
         }
 
         .chart-header {
@@ -104,12 +326,12 @@
 
         .chart-container {
             width: 100%;
-            height: 400px;
+            height: 300px;
         }
 
         @media (max-width: 768px) {
             .dashboard-grid {
-                grid-template-columns: 1fr;
+                flex-direction: column;
             }
 
             .chart-container {
@@ -176,7 +398,6 @@
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             display: none;
             z-index: 1000;
             width: 100%; /* Match the search input width */
@@ -213,9 +434,6 @@
             transition: background 0.2s;
         }
 
-        .hot-item:hover {
-            background: #f5f5f5;
-        }
 
         .hot-rank {
             width: 30px;
@@ -310,7 +528,6 @@
             background: white;
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             display: none;
             z-index: 1000;
         }
@@ -392,12 +609,9 @@
     </header>
 
     <main class="dashboard-container">
-        <div class="map-container">
-            <div class="dashboard-header">
-                <h1>数据可视化仪表板</h1>
-                <div class="showTime" id="currentTime"></div>
-            </div>
-            <iframe src="https://ditu.amap.com/"></iframe>
+        <div class="dashboard-header">
+            <h1>数据可视化仪表板</h1>
+            <div class="showTime" id="currentTime"></div>
         </div>
 
         <div class="dashboard-column">
@@ -431,6 +645,44 @@
                 </div>
             </div>
         </div>
+
+        <div class="map-with-search-container">
+            <div class="map-container">
+                <iframe src="https://ditu.amap.com/"></iframe>
+            </div>
+
+            <div class="permanent-search-panel">
+                <div class="search-panel-header">
+                    <div class="search-title">深度分析</div>
+                </div>
+
+                <div class="search-info-text">
+                    请<a href="/login" class="login-link">登录</a>以启用 AI 深度分析<br>登录前，只能查看热门话题第一的深度分析报告
+                </div>
+
+                <div class="search-input-container">
+                    <span class="search-input-icon">
+                        <span class="material-icons">auto_awesome</span>
+                    </span>
+                    <input type="text" class="search-input" id="permanentSearchInput" placeholder="输入您想深入了解的教育话题..." autocomplete="off" />
+                </div>
+
+                <!-- 热搜下拉列表（微博风格） -->
+                <div id="hot-search-permanent" class="hot-search-dropdown">
+                    <div class="dropdown-header">
+                        <h4>热门话题</h4>
+                        <div class="refresh-btn-permanent">换一换</div>
+                    </div>
+                    <div class="hot-list-grid"></div>
+                </div>
+
+                <div class="search-loading" id="permanentSearchLoading">
+                    <span class="material-icons spin" style="font-size: 36px; color: var(--vp-c-blue);">autorenew</span>
+                </div>
+
+                <div class="search-results" id="permanentSearchResults"></div>
+            </div>
+        </div>
     </main>
 
     <!-- 引入 ECharts 库 -->
@@ -453,7 +705,6 @@
             border-radius: 16px; /* MD3 Extended FAB corner radius */
             color: white;
             background: linear-gradient(135deg, #0066cc, #33ccff);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2), 0 4px 12px rgba(0,0,0,0.15);
             cursor: pointer;
             font-family: var(--vp-font-family-base);
             font-size: 18px;
@@ -466,15 +717,6 @@
             background: linear-gradient(135deg, #004d99, #0099cc);
         }
 
-        .search-extended-fab:hover {
-            background: linear-gradient(135deg, #0080ff, #66ddff);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.25), 0 8px 24px rgba(0,0,0,0.2);
-            transform: translateY(-2px);
-        }
-
-        .dark .search-extended-fab:hover {
-            background: linear-gradient(135deg, #0066cc, #33ccff);
-        }
 
         .search-extended-fab:active {
             transform: translateY(0);
@@ -523,7 +765,6 @@
             border-radius: 28px; /* MD3 dialog corner radius */
             width: 90%;
             max-width: 640px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.22);
             position: relative;
             border: 1px solid var(--vp-c-border);
             min-width: 300px;
@@ -583,13 +824,11 @@
             color: #ffffff;
             padding: 6px 10px;
             border-radius: 999px;
-            box-shadow: 0 6px 18px rgba(0,122,204,0.18);
         }
         /* Dark theme selected style */
         .dark .search-scope input[type="radio"]:checked + span {
             background: var(--vp-c-blue-light);
             color: #07203a;
-            box-shadow: 0 6px 18px rgba(34,170,255,0.12);
         }
         /* Highlight for matched terms */
         .search-highlight {
@@ -612,10 +851,6 @@
             transition: all 0.2s ease;
         }
 
-        .search-info-text .login-link:hover {
-            color: var(--vp-c-blue-light);
-            text-decoration: underline;
-        }
 
         .search-input-container {
             position: relative;
@@ -675,9 +910,6 @@
             font-size: 14px; /* Smaller font size */
         }
 
-        .hot-item-grid:hover {
-            background: #f5f5f5;
-        }
 
         .hot-rank {
             width: 24px; /* Reduced width */
@@ -737,9 +969,6 @@
             border-radius: 4px;
         }
 
-        .search-results::-webkit-scrollbar-thumb:hover {
-            background: var(--vp-c-gray-light-2);
-        }
 
         .result-item {
             padding: 16px;
@@ -749,9 +978,6 @@
             transition: background-color 0.2s ease;
         }
 
-        .result-item:hover {
-            background-color: var(--vp-c-bg-mute);
-        }
 
         .result-item:last-child {
             margin-bottom: 0;
@@ -827,7 +1053,7 @@
                 </button>
             </div>
             <div class="search-info-text">
-                请<a href="/login" class="login-link">登录</a>以启用 AI 深度搜索
+                请<a href="/login" class="login-link">登录</a>以启用 AI 智能搜索<br>登录前，只能使用传统搜索
             </div>
             <div class="search-scope" role="radiogroup" aria-label="搜索范围">
                 <label>
@@ -1915,6 +2141,211 @@
 
         // Also run whenever the window is resized
         window.addEventListener('resize', adjustArrowLayerWidth);
+
+        // Permanent search panel functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const permanentSearchInput = document.getElementById('permanentSearchInput');
+            const permanentSearchResults = document.getElementById('permanentSearchResults');
+            const permanentSearchLoading = document.getElementById('permanentSearchLoading');
+            const hotSearchPermanent = document.getElementById('hot-search-permanent');
+            const hotListGrid = hotSearchPermanent.querySelector('.hot-list-grid');
+            const refreshBtnPermanent = document.getElementById('hot-search-permanent').querySelector('.refresh-btn-permanent');
+
+            // Sample hot search data for the permanent panel
+            let hotDataPermanent = [
+                { title: "Top Global High Schools Ranking", heat: 1250000, rank: 1 },
+                { title: "International Curriculum Comparison", heat: 980000, rank: 2 },
+                { title: "Study Abroad Application Trends", heat: 850000, rank: 3 },
+                { title: "High School Education Innovation", heat: 720000, rank: 4 },
+                { title: "Global IB School Distribution", heat: 650000, rank: 5 },
+                { title: "AP Course Selection Guide", heat: 540000, rank: 6 },
+                { title: "International School Faculty Quality", heat: 430000, rank: 7 },
+                { title: "High School Student Mental Health", heat: 380000, rank: 8 }
+            ];
+
+            // Initialize hot search for permanent panel
+            function initHotSearchPermanent() {
+                hotListGrid.innerHTML = '';
+
+                hotDataPermanent.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'hot-item-grid';
+
+                    div.innerHTML = `
+                        <div class="hot-rank">${item.rank}</div>
+                        <div class="hot-content">
+                            <div class="hot-title">${item.title}</div>
+                            <div class="hot-stats">${formatHeat(item.heat)} 热度</div>
+                        </div>
+                    `;
+                    div.dataset.keyword = item.title;
+                    hotListGrid.appendChild(div);
+                });
+            }
+
+            // Format heat values
+            function formatHeat(heat) {
+                if (heat >= 10000) {
+                    return (heat / 10000).toFixed(1) + '万';
+                }
+                return heat;
+            }
+
+            // Initialize the hot search
+            initHotSearchPermanent();
+
+            // Refresh hot search data
+            refreshBtnPermanent.addEventListener('click', function() {
+                // In a real implementation, this would fetch new data
+                // For now, we'll just shuffle the existing data
+                hotDataPermanent = hotDataPermanent.sort(() => Math.random() - 0.5);
+                initHotSearchPermanent();
+            });
+
+            // Click on hot search item
+            hotListGrid.addEventListener('click', function(e) {
+                const hotItem = e.target.closest('.hot-item-grid');
+                if (hotItem) {
+                    const keyword = hotItem.dataset.keyword;
+                    permanentSearchInput.value = keyword;
+                    // Hide hot search when clicking on a hot item
+                    hotSearchPermanent.style.display = 'none';
+                    performPermanentSearch(keyword);
+                }
+            });
+
+            // Perform search function for permanent panel
+            async function performPermanentSearch(query) {
+                if (!query.trim()) return;
+
+                // Show loading indicator
+                permanentSearchLoading.style.display = 'block';
+                permanentSearchResults.innerHTML = '';
+
+                try {
+                    // In a real implementation, this would call the search API
+                    // For demo purposes, we'll simulate a delay and return mock results
+                    await new Promise(resolve => setTimeout(resolve, 800));
+
+                    // Hide loading indicator
+                    permanentSearchLoading.style.display = 'none';
+
+                    // Mock results - in a real implementation, these would come from the API
+                    const mockResults = [
+                        { id: 1, title: `关于 "${query}" 的深度分析报告`, content: "这份报告提供了关于该主题的详细教育分析和洞察..." },
+                        { id: 2, title: `"${query}" 相关数据深度解读`, content: "基于大数据对该主题进行的深入分析和专业见解..." },
+                        { id: 3, title: `全球 "${query}" 发展趋势分析`, content: "从多个维度解读该主题在全球范围内的发展趋势和影响因素..." },
+                        { id: 4, title: `专家解读：${query}`, content: "教育专家对这一主题的专业见解和未来展望..." }
+                    ];
+
+                    displayPermanentSearchResults(mockResults, query);
+                } catch (error) {
+                    console.error('搜索出错:', error);
+                    permanentSearchLoading.style.display = 'none';
+                    permanentSearchResults.innerHTML = '<div class="result-item">搜索出现错误，请稍后再试</div>';
+                }
+            }
+
+            // Display search results for permanent panel
+            function displayPermanentSearchResults(results, query) {
+                permanentSearchResults.innerHTML = '';
+
+                if (results.length === 0) {
+                    permanentSearchResults.innerHTML = '<div class="result-item">未找到相关结果</div>';
+                    return;
+                }
+
+                results.forEach((result, index) => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'result-item';
+
+                    // Check if this is the first result for the specific query "Top Global High Schools Ranking"
+                    const isFirstResultForTopQuery = (query === "Top Global High Schools Ranking" && index === 0);
+
+                    // Highlight title and a short snippet from content
+                    let titleHtml = highlightText(result.title || '无标题', query);
+
+                    // If it's the first result for the top query, wrap the title in a link
+                    if (isFirstResultForTopQuery) {
+                        titleHtml = `<a href="deep_research_today's_no1.html" target="_blank" class="result-title-link">${titleHtml}</a>`;
+                    }
+
+                    // Create a snippet from content around the first match if possible
+                    let snippet = '';
+                    if (result.content) {
+                        const idx = result.content.toLowerCase().indexOf((query||'').toLowerCase());
+                        if (idx >= 0) {
+                            const start = Math.max(0, idx - 40);
+                            snippet = result.content.substring(start, start + 180);
+                        } else {
+                            snippet = result.content.substring(0, 150);
+                        }
+                    }
+                    const contentHtml = highlightText(snippet ? (snippet + (result.content && result.content.length > snippet.length ? '...' : '')) : '', query);
+
+                    resultItem.innerHTML = `
+                        <div class="result-title">${titleHtml}</div>
+                        <div class="result-content">${contentHtml}</div>
+                    `;
+                    resultItem.addEventListener('click', function() {
+                        // In a real implementation, this would navigate to the article
+                        console.log(`查看文章详情: ${result.id}`);
+                    });
+                    permanentSearchResults.appendChild(resultItem);
+                });
+            }
+
+            // Helper function to highlight text
+            function highlightText(text, q) {
+                if (!text || !q) return escapeHtml(text);
+                // Split on whitespace to highlight each token
+                const tokens = q.trim().split(/\s+/).filter(Boolean).map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+                if (tokens.length === 0) return escapeHtml(text);
+                const pattern = new RegExp('(' + tokens.join('|') + ')', 'ig');
+                return escapeHtml(text).replace(pattern, '<span class="search-highlight">$1</span>');
+            }
+
+            // Helper function to escape HTML
+            function escapeHtml(str) {
+                if (!str) return '';
+                return str.replace(/[&<>"'`]/g, function(match) {
+                    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;","`":"&#96;"})[match];
+                });
+            }
+
+            // Search input event
+            let searchTimeout;
+            permanentSearchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                const query = this.value.trim();
+
+                // Hide hot search immediately when typing
+                hotSearchPermanent.style.display = 'none';
+
+                if (query.length === 0) {
+                    permanentSearchResults.innerHTML = '';
+                    permanentSearchLoading.style.display = 'none';
+                    // Show hot search if input is empty
+                    hotSearchPermanent.style.display = 'block';
+                    return;
+                }
+
+                // Delay search to avoid frequent requests
+                searchTimeout = setTimeout(() => {
+                    performPermanentSearch(query);
+                }, 500);
+            });
+
+            // Enter key to search
+            permanentSearchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    const query = this.value.trim();
+                    if (query.length > 0) {
+                        performPermanentSearch(query);
+                    }
+                }
+            });
+        });
     </script>
 </body>
 </html>

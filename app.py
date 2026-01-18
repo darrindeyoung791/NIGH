@@ -77,5 +77,10 @@ def article_detail(article_id):
     article = Article.query.filter_by(id=article_id).first_or_404()
     return render_template('article_detail.html', article=article)
 
+@app.route('/deep_research_today\'s_no1.html')
+def deep_research_todays_no1():
+    """Route for the deep research page for today's top ranking"""
+    return render_template('deep_research_today\'s_no1.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
